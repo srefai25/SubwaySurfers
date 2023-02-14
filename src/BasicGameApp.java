@@ -15,16 +15,14 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public JFrame frame;
     public Canvas canvas;
     public JPanel panel;
-    public JFrame frame;
-    public Canvas canvas;
     public BufferStrategy bufferStrategy;
 
-    public Image jakePic;
+    public Image jaredPic;
+    public Image binPic;
     public Image backgroundPic;
-    public Image obstacle;
 
-    public Player jake;
-    public Obstacle wall;
+    public Player jared;
+    public Obstacle bin;
 
 
     //Mouse position variables
@@ -43,40 +41,42 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
     public static void main(String[] args) {
         BasicGameApp myGame = new BasicGameApp();
-        new Thread(myGame). start();
+        new Thread(myGame).start();
     }
 
-    public BasicGameApp(){
+    public BasicGameApp() {
         setUpGraphics();
         canvas.addKeyListener(this);
         canvas.addMouseListener(this);
 
-    }
+        jaredPic = Toolkit.getDefaultToolkit().getImage("white duck.png");
+        jared = new Player ("Jared", 700, 350, 300, 315, 0, 0);
 
-    public void run(){
-while (true){
-    moveThings();
-    checkIntersections();
-    render();
-    pause(20);
-}
-    }
+        binPic = Toolkit.getDefaultToolkit().getImage("recycle.png");
+        bin = new Obstacle ("Recycle", 1, 1, 200, 300);
 
-    public void moveThings(){
+
+        backgroundPic = Toolkit.getDefaultToolkit().getImage("background.gif");
 
     }
 
-    public void checkIntersections(){
+    public void run() {
+        while (true) {
+            moveThings();
+            checkIntersections();
+            render();
+            pause(20);
+        }
+    }
+
+    public void moveThings() {
 
     }
 
-    public void render(){
-        Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-        g.clearRect(0, 0, WIDTH, HEIGHT);
+    public void checkIntersections() {
 
-        g.dispose();
-        bufferStrategy.show();
     }
+
 
     public void pause(int time) {
         //sleep
@@ -86,8 +86,6 @@ while (true){
 
         }
     }
-
-
 
 
     public void setUpGraphics() {
@@ -100,6 +98,8 @@ while (true){
         // creates a canvas which is a blank rectangular area of the screen onto which the application can draw
         // and trap input events (Mouse and Keyboard events)
         canvas = new Canvas();
+        canvas.addMouseListener(this);
+        canvas.addKeyListener(this);
         canvas.setBounds(0, 0, WIDTH, HEIGHT);
         canvas.setIgnoreRepaint(true);
 
@@ -118,7 +118,64 @@ while (true){
         canvas.requestFocus();
         System.out.println("DONE");
 
+
     }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    public void render() {
+        Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
+        g.clearRect(0, 0, WIDTH, HEIGHT);
+
+        //draw characters to the screen
+
+        g.drawImage(backgroundPic, 0,0, WIDTH, HEIGHT, null);
+        g.drawImage(jaredPic, jared.xpos, jared.ypos, jared.width, jared.height, null);
+        g.drawImage(binPic, bin.xpos, bin.ypos, bin.width, bin.height, null);
+
+        g.dispose();
+        bufferStrategy.show();
+    }
+
+}
 
     //*******************************************************************************
 

@@ -1,6 +1,6 @@
 import java.awt.*;
 
-public class Jake {
+public class Player {
 
     public String name;
     public int xpos;
@@ -9,26 +9,23 @@ public class Jake {
     public int dy;
     public int width;
     public int height;
+    public Image pic;
     public Rectangle rec;
     public boolean right;
     public boolean down;
     public boolean left;
     public boolean up;
-    public Rectangle rec;			//declare a rectangle variable
+    //declare a rectangle variable
     public String text;
 
-    public Jake(String pName, int pXpos, int pYpos, int pWidth, int pHeight, int pDx, int pDy, boolean pRight, boolean pLeft, boolean pUp, boolean pDown){
+    public Player(String pName, int pXpos, int pYpos, int pWidth, int pHeight, int pDx, int pDy){
         name = pName;
         xpos = pXpos;
         ypos = pYpos;
-        dx = pDx;
-        dy = pDy;
         width = pWidth;
         height = pHeight;
-        right = pRight;
-        left = pLeft;
-        up = pUp;
-        down = pDown;
+        dx = pDx;
+        dy = pDy;
         rec = new Rectangle(xpos,ypos,width,height);
     }
 
