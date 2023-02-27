@@ -17,12 +17,22 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public JPanel panel;
     public BufferStrategy bufferStrategy;
 
+    public boolean gameStart = false;
+
     public Image jaredPic;
-    public Image binPic;
+    public Image obstaclePic;
+    public Image flyjaredPic;
+    public Image fluffPic;
     public Image backgroundPic;
+    public Image startPic;
+    public Image startDuckPic;
+    public Image playPic;
 
     public Player jared;
-    public Obstacle bin;
+    public Player flyjared;
+    public Player fluff;
+    public Obstacle obstacle;
+    public Obstacle[] bin;
 
 
     //Mouse position variables
@@ -31,11 +41,6 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     //button
     public Button button1;
 
-
-    //timer variables
-    public long startTime;
-    public long currentTime;
-    public long elapsedTime;
 
     public boolean startTimer;
 
@@ -49,15 +54,32 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         canvas.addKeyListener(this);
         canvas.addMouseListener(this);
 
+        button1 = new Button(300, 300, 150, 60);
+
         jaredPic = Toolkit.getDefaultToolkit().getImage("white duck.png");
         jared = new Player ("Jared", 700, 350, 300, 315, 0, 0);
 
-        binPic = Toolkit.getDefaultToolkit().getImage("recycle.png");
-        bin = new Obstacle ("Recycle", 1, 1, 200, 300);
+        obstaclePic = Toolkit.getDefaultToolkit().getImage("recycle.png");
+        obstacle = new Obstacle (300, 400, 1, 1,obstaclePic);
 
+        flyjaredPic = Toolkit.getDefaultToolkit().getImage("birdflying-transformed.png");
+        flyjared = new Player ("Flying Jared", 700, 350, 400, 325, 0,0);
+
+//        fluffPic = Toolkit.getDefaultToolkit().getImage("whitefluff.png");
+//        fluff = new Player ("Fluffy Jared", 700,350,200,215,0,0);
 
         backgroundPic = Toolkit.getDefaultToolkit().getImage("background.gif");
+        startPic = Toolkit.getDefaultToolkit().getImage("startGIF.gif");
+        startDuckPic = Toolkit.getDefaultToolkit().getImage("startDuck.gif");
+        playPic = Toolkit.getDefaultToolkit().getImage("play button.png");
 
+
+        //construct stinky array
+        bin = new Obstacle[5];
+        //fill stinky array with constructed cheese
+        for(int x=0; x<bin.length; x++){
+            bin[x] = new Obstacle(x*100+400, 400, 4, 2, obstaclePic);
+        }
     }
 
     public void run() {
@@ -70,11 +92,18 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     }
 
     public void moveThings() {
+        jared.move();
 
+        for (int x=0; x<bin.length; x++){
+            bin[x].move();
+        }
     }
 
     public void checkIntersections() {
-
+        for (int x=0; x<bin.length; x++)
+            if (bin[x].rec.intersects(jared.rec)){
+                bin[x].isAlive = false;
+            }
     }
 
 
@@ -127,38 +156,83 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent event) {
+        char key = event.getKeyChar();     //gets the character of the key pressed
+        int keyCode = event.getKeyCode();  //gets the keyCode (an integer) of the key pressed
+        System.out.println("Key Pressed: " + key + "  Code: " + keyCode);
+
+        if (keyCode == 39) {//right arrow
+            jared.right = true;
+        }
+        if (keyCode == 40) {//down arrow
+            jared.down = true;
+            jared.up = true;
+        }
+        if (keyCode == 37){//left arrow
+            jared.left = true;
+        }
+        if (keyCode == 38){ //up arrow
+            jared.up = true;
+            jared.down = false;
+        }
 
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent event) {
+
+        char key = event.getKeyChar();
+        int keyCode = event.getKeyCode();
+        //This method will do something when a key is released
+        if (keyCode == 37){//left arrow
+            jared.left = false;
+        }
+
+        if (keyCode == 39) {//right arrow
+            jared.right = false;
+        }
 
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        int x, y;
+        x = e.getX();
+        y = e.getY();
 
+        mouseX = x;
+        mouseY = y;
+        System.out.println();
+        System.out.println("Mouse Clicked at " + x + ", " + y);
+
+        if (button1.rec.contains(x, y)) {
+            System.out.println("Game Started");
+
+        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        System.out.println();
+        System.out.println("Mouse Button Pressed");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        System.out.println();
+        System.out.println("Mouse Button Released");
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        System.out.println();
+        System.out.println("Mouse has entered the window");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        System.out.println();
+        System.out.println("Mouse has left the window");
     }
 
     public void render() {
@@ -166,10 +240,27 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         //draw characters to the screen
+        if (gameStart == false){
+        g.drawImage(startPic, 0,0,WIDTH, HEIGHT, null);
+        g.drawImage(startDuckPic, 100, 200, 200, 280, null);
+        g.drawImage(playPic, 400, 300, 400, 400, null);
+        }
+        else {
+            g.drawImage(backgroundPic, 0,0, WIDTH, HEIGHT, null);
+            g.drawImage(obstaclePic, obstacle.xpos, obstacle.ypos, obstacle.width, obstacle.height, null);
+            if (jared.down == true){
+                g.drawImage(jaredPic, jared.xpos, 350, jared.width, jared.height, null);
+            }else if (jared.up == true){
+                g.drawImage(flyjaredPic, jared.xpos, 100, flyjared.width, flyjared.height, null);
+            }
 
-        g.drawImage(backgroundPic, 0,0, WIDTH, HEIGHT, null);
-        g.drawImage(jaredPic, jared.xpos, jared.ypos, jared.width, jared.height, null);
-        g.drawImage(binPic, bin.xpos, bin.ypos, bin.width, bin.height, null);
+        }
+
+
+
+//        g.drawImage(jaredPic, jared.xpos, jared.ypos, jared.width, jared.height, null);
+
+
 
         g.dispose();
         bufferStrategy.show();
