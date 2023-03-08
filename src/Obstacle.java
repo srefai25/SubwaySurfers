@@ -1,13 +1,13 @@
 import java.awt.*;
 
 public class Obstacle {
-    public int xpos;                //the x position
-    public int ypos;                //the y position
+    public double xpos;                //the x position
+    public double ypos;                //the y position
     public int width;
     public int height;
     public boolean isAlive;            //a boolean to denote if the hero is alive or dead.
-    public int dx;                    //the speed of the hero in the x direction
-    public int dy;                    //the speed of the hero in the y direction
+    public double dx;                    //the speed of the hero in the x direction
+    public double dy;                    //the speed of the hero in the y direction
     public Rectangle rec;
     public Image pic;
     public int hits;
@@ -29,7 +29,7 @@ public class Obstacle {
         pic = picParameter;
         isAlive = true;
         hits = 0;
-        rec = new Rectangle(xpos, ypos, width, height);
+        rec = new Rectangle((int)xpos, (int)ypos, width, height);
 
 
     } // constructor
@@ -38,7 +38,8 @@ public class Obstacle {
     //The move method.  Everytime this is run (or "called") the hero's x position and y position change by dx and dy
     public void move() {
         xpos = xpos + dx;
-        ypos = ypos + dy;
+        ypos = ypos - dy;
+        //width = (int)(width*.1);
 
         if (xpos > 1000 - width || xpos < 0) {
             dx = -dx;
@@ -48,7 +49,7 @@ public class Obstacle {
             dy = -dy;
         }
 
-        rec = new Rectangle(xpos, ypos, width, height);
+        rec = new Rectangle((int)xpos, (int)ypos, width, height);
 
     }
 

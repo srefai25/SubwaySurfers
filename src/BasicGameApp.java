@@ -33,6 +33,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public Player fluff;
     public Obstacle obstacle;
     public Obstacle[] bin;
+    public Point[] dots;
 
 
     //Mouse position variables
@@ -40,7 +41,8 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
     //button
     public Button button1;
-
+    public double mag=2;
+    public double changeX,changeY,totalDistance;
 
     public boolean startTimer;
 
@@ -54,13 +56,13 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         canvas.addKeyListener(this);
         canvas.addMouseListener(this);
 
-        button1 = new Button(300, 300, 150, 60);
+        button1 = new Button(400, 400, 400, 150);
 
         jaredPic = Toolkit.getDefaultToolkit().getImage("white duck.png");
         jared = new Player ("Jared", 700, 350, 300, 315, 0, 0);
 
         obstaclePic = Toolkit.getDefaultToolkit().getImage("recycle.png");
-        obstacle = new Obstacle (300, 400, 1, 1,obstaclePic);
+//        obstacle = new Obstacle (200, 400, 1, 1,obstaclePic);
 
         flyjaredPic = Toolkit.getDefaultToolkit().getImage("birdflying-transformed.png");
         flyjared = new Player ("Flying Jared", 700, 350, 400, 325, 0,0);
@@ -72,13 +74,32 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         startPic = Toolkit.getDefaultToolkit().getImage("startGIF.gif");
         startDuckPic = Toolkit.getDefaultToolkit().getImage("startDuck.gif");
         playPic = Toolkit.getDefaultToolkit().getImage("play button.png");
+        dots = new Point [16];
+        dots[0] = new Point (123, 464);
+        dots[1] = new Point (230, 449);
+        dots[2] = new Point (229, 433);
+        dots[3] = new Point (236, 418);
+        dots[4] = new Point (249, 408);
+        dots[5] = new Point (272, 404);
+        dots[6] = new Point (291, 409);
+        dots[7] = new Point (303, 417);
+        dots[8] = new Point (306, 430);
+        dots[9] = new Point (282, 464);
+        dots[10] = new Point (222, 469);
+        dots[11] = new Point (180, 419);
+        dots[12] = new Point (189, 339);
+        dots[13] = new Point (226, 301);
+        dots[14] = new Point (560, 373);
+        dots[15] = new Point (572, 394);
 
 
         //construct stinky array
-        bin = new Obstacle[5];
-        //fill stinky array with constructed cheese
+        bin = new Obstacle[1];
+
+
+        //fill stinky array with constructed bins
         for(int x=0; x<bin.length; x++){
-            bin[x] = new Obstacle(x*100+400, 400, 4, 2, obstaclePic);
+            bin[x] = new Obstacle(200, 100, 1, 0, obstaclePic);
         }
     }
 
@@ -88,9 +109,20 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
             checkIntersections();
             render();
             pause(20);
+            binPosition();
         }
     }
 
+    public void binPosition(){
+        for (int i=0; i<bin.length; i++){
+            for (int x=0; x<dots.length; x++) {
+                if (bin[i].rec.intersects(dots[x].rec)) {
+                    System.out.println("bin is intersecting with dot" + x);
+                }
+            }
+        }
+
+    }
     public void moveThings() {
         jared.move();
 
@@ -102,7 +134,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public void checkIntersections() {
         for (int x=0; x<bin.length; x++)
             if (bin[x].rec.intersects(jared.rec)){
-                bin[x].isAlive = false;
+                jared.isAlive = false;
             }
     }
 
@@ -127,8 +159,8 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         // creates a canvas which is a blank rectangular area of the screen onto which the application can draw
         // and trap input events (Mouse and Keyboard events)
         canvas = new Canvas();
-        canvas.addMouseListener(this);
-        canvas.addKeyListener(this);
+//        canvas.addMouseListener(this);
+//        canvas.addKeyListener(this);
         canvas.setBounds(0, 0, WIDTH, HEIGHT);
         canvas.setIgnoreRepaint(true);
 
@@ -207,47 +239,66 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
         if (button1.rec.contains(x, y)) {
             System.out.println("Game Started");
-
+            gameStart = true;
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse Button Pressed");
+//        System.out.println();
+//        System.out.println("Mouse Button Pressed");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse Button Released");
+//        System.out.println();
+//        System.out.println("Mouse Button Released");
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse has entered the window");
+//        System.out.println();
+//        System.out.println("Mouse has entered the window");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.println();
-        System.out.println("Mouse has left the window");
+//        System.out.println();
+//        System.out.println("Mouse has left the window");
+    }
+    public void setDirection(){
+        changeY= bin[0].ypos-dots[1].ypos;
+        changeX = bin[0].xpos-dots[1].xpos;
+        totalDistance= Math.sqrt(Math.pow(changeX,2)+Math.pow(changeY,2));
+        System.out.println("changeX"+changeX);
+        System.out.println("changeY"+changeY);
+        System.out.println("total"+totalDistance);
+
+        bin[0].dy=mag*(changeY/totalDistance);
+        bin[0].dx=mag*(changeX/totalDistance);
+
+
     }
 
     public void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
-
+        setDirection();
         //draw characters to the screen
         if (gameStart == false){
         g.drawImage(startPic, 0,0,WIDTH, HEIGHT, null);
         g.drawImage(startDuckPic, 100, 200, 200, 280, null);
-        g.drawImage(playPic, 400, 300, 400, 400, null);
+        g.drawImage(playPic, button1.xpos, button1.ypos, button1.width, button1.height, null);
+        g.drawRect(button1.rec.x, button1.rec.y, button1.rec.width, button1.rec.height);
         }
         else {
             g.drawImage(backgroundPic, 0,0, WIDTH, HEIGHT, null);
-            g.drawImage(obstaclePic, obstacle.xpos, obstacle.ypos, obstacle.width, obstacle.height, null);
+            for (int x=0; x< bin.length;x++){
+                if (jared.isAlive == true) {
+                  //  System.out.println(bin[x].height + " w: " + bin[x].width);
+                    g.drawImage(bin[x].pic,(int) bin[x].xpos, (int)bin[x].ypos, bin[x].width, bin[x].height, null);
+                }
+            }
             if (jared.down == true){
                 g.drawImage(jaredPic, jared.xpos, 350, jared.width, jared.height, null);
             }else if (jared.up == true){
@@ -261,6 +312,8 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 //        g.drawImage(jaredPic, jared.xpos, jared.ypos, jared.width, jared.height, null);
 
 
+        g.setColor(Color.yellow);
+        g.drawRect(dots[1].rec.x, dots[1].rec.y, 10,10);
 
         g.dispose();
         bufferStrategy.show();

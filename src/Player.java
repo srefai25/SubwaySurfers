@@ -10,6 +10,7 @@ public class Player {
     public int width;
     public int height;
     public Image pic;
+    public boolean isAlive;
     public Rectangle rec;
     public boolean right;
     public boolean down = true;
@@ -27,6 +28,7 @@ public class Player {
         height = pHeight;
         dx = pDx;
         dy = pDy;
+        isAlive = true;
         rec = new Rectangle(xpos,ypos,width,height);
     }
 
