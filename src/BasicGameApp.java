@@ -100,6 +100,17 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         //fill stinky array with constructed bins
         for(int x=0; x<bin.length; x++){
             bin[x] = new Obstacle(200, 100, 1, 0, obstaclePic);
+
+            changeY = dots[bin[x].toDot].ypos - bin[x].ypos;
+            changeX = dots[bin[x].toDot].xpos - bin[x].xpos;
+
+            totalDistance = Math.sqrt(Math.pow(changeX, 2) + Math.pow(changeY, 2));
+            System.out.println("changeX" + changeX);
+            System.out.println("changeY" + changeY);
+            System.out.println("total" + totalDistance);
+
+            bin[x].dy = mag * (changeY / totalDistance);
+            bin[x].dx = mag * (changeX / totalDistance);
         }
     }
 
@@ -124,6 +135,8 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
     }
     public void moveThings() {
+        setDirection();
+
         jared.move();
 
         for (int x=0; x<bin.length; x++){
@@ -267,15 +280,31 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 //        System.out.println("Mouse has left the window");
     }
     public void setDirection(){
-        changeY= bin[0].ypos-dots[1].ypos;
-        changeX = bin[0].xpos-dots[1].xpos;
-        totalDistance= Math.sqrt(Math.pow(changeX,2)+Math.pow(changeY,2));
-        System.out.println("changeX"+changeX);
-        System.out.println("changeY"+changeY);
-        System.out.println("total"+totalDistance);
+        if(bin[0].toDot==dots.length){
+            bin[0].dy = 1;
+            bin[0].dx = 0;
+        }
+        else {
+        if(bin[0].rec.intersects(dots[bin[0].toDot].rec)) {
+            bin[0].toDot++;
+            if(bin[0].toDot==dots.length){
+                bin[0].dy = 1;
+                bin[0].dx = 0;
+            }
+            else {
+                changeY = dots[bin[0].toDot].ypos - bin[0].ypos;
+                changeX = dots[bin[0].toDot].xpos - bin[0].xpos;
 
-        bin[0].dy=mag*(changeY/totalDistance);
-        bin[0].dx=mag*(changeX/totalDistance);
+                totalDistance = Math.sqrt(Math.pow(changeX, 2) + Math.pow(changeY, 2));
+                System.out.println("changeX" + changeX);
+                System.out.println("changeY" + changeY);
+                System.out.println("total" + totalDistance);
+
+                bin[0].dy = mag * (changeY / totalDistance);
+                bin[0].dx = mag * (changeX / totalDistance);
+            }
+            }
+        }
 
 
     }
@@ -283,7 +312,6 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
-        setDirection();
         //draw characters to the screen
         if (gameStart == false){
         g.drawImage(startPic, 0,0,WIDTH, HEIGHT, null);

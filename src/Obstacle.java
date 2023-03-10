@@ -11,6 +11,7 @@ public class Obstacle {
     public Rectangle rec;
     public Image pic;
     public int hits;
+    public int toDot;
 
     // METHOD DEFINITION SECTION
 
@@ -29,6 +30,7 @@ public class Obstacle {
         pic = picParameter;
         isAlive = true;
         hits = 0;
+        toDot = 0;
         rec = new Rectangle((int)xpos, (int)ypos, width, height);
 
 
@@ -38,7 +40,7 @@ public class Obstacle {
     //The move method.  Everytime this is run (or "called") the hero's x position and y position change by dx and dy
     public void move() {
         xpos = xpos + dx;
-        ypos = ypos - dy;
+        ypos = ypos + dy;
         //width = (int)(width*.1);
 
         if (xpos > 1000 - width || xpos < 0) {
