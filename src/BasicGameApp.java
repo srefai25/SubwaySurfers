@@ -18,6 +18,8 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public BufferStrategy bufferStrategy;
 
     public boolean gameStart = false;
+    public boolean gameover = false;
+    public boolean Tryagain = false;
 
     public Image jaredPic;
     public Image obstaclePic;
@@ -27,13 +29,16 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
     public Image startPic;
     public Image startDuckPic;
     public Image playPic;
+    public Image gameoverPic;
 
     public Player jared;
     public Player flyjared;
     public Player fluff;
     public Obstacle obstacle;
     public Obstacle[] bin;
-    public Point[] dots;
+    public Point[] path1;
+    public Point[] path2;
+    public Point[] path3;
 
 
     //Mouse position variables
@@ -41,6 +46,8 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
     //button
     public Button button1;
+    public Button gameOver;
+    public Button TryAgain;
     public double mag=2;
     public double changeX,changeY,totalDistance;
 
@@ -59,50 +66,101 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         button1 = new Button(400, 400, 400, 150);
 
         jaredPic = Toolkit.getDefaultToolkit().getImage("white duck.png");
-        jared = new Player ("Jared", 700, 350, 300, 315, 0, 0);
+        jared = new Player ("Jared", 700, 600, 125, 200, 0, 0);
 
         obstaclePic = Toolkit.getDefaultToolkit().getImage("recycle.png");
 //        obstacle = new Obstacle (200, 400, 1, 1,obstaclePic);
 
-        flyjaredPic = Toolkit.getDefaultToolkit().getImage("birdflying-transformed.png");
-        flyjared = new Player ("Flying Jared", 700, 350, 400, 325, 0,0);
+//        flyjaredPic = Toolkit.getDefaultToolkit().getImage("birdflying-transformed.png");
+//        flyjared = new Player ("Flying Jared", 700, 350, 400, 325, 0,0);
 
-//        fluffPic = Toolkit.getDefaultToolkit().getImage("whitefluff.png");
-//        fluff = new Player ("Fluffy Jared", 700,350,200,215,0,0);
+        fluffPic = Toolkit.getDefaultToolkit().getImage("whitefluff.png");
+        fluff = new Player ("Fluffy Jared", 700,350,200,215,0,0);
+        gameOver = new Button(0, 0, 1000, 700);
+        TryAgain = new Button(300, 420, 200, 100);
 
         backgroundPic = Toolkit.getDefaultToolkit().getImage("background.gif");
         startPic = Toolkit.getDefaultToolkit().getImage("startGIF.gif");
+        gameoverPic = Toolkit.getDefaultToolkit().getImage("GAMEOVER.gif");
         startDuckPic = Toolkit.getDefaultToolkit().getImage("startDuck.gif");
         playPic = Toolkit.getDefaultToolkit().getImage("play button.png");
-        dots = new Point [16];
-        dots[0] = new Point (123, 464);
-        dots[1] = new Point (230, 449);
-        dots[2] = new Point (229, 433);
-        dots[3] = new Point (236, 418);
-        dots[4] = new Point (249, 408);
-        dots[5] = new Point (272, 404);
-        dots[6] = new Point (291, 409);
-        dots[7] = new Point (303, 417);
-        dots[8] = new Point (306, 430);
-        dots[9] = new Point (282, 464);
-        dots[10] = new Point (222, 469);
-        dots[11] = new Point (180, 419);
-        dots[12] = new Point (189, 339);
-        dots[13] = new Point (226, 301);
-        dots[14] = new Point (560, 373);
-        dots[15] = new Point (572, 394);
+        path1 = new Point [14];
+        path1[0] = new Point (220, 445);
+        path1[1] = new Point (236, 350);
+        path1[2] = new Point (272, 360);
+        path1[3] = new Point (313, 317);
+        path1[4] = new Point (222, 469);
+        path1[5] = new Point (100, 280);
+        path1[6] = new Point (180, 219);
+        path1[7] = new Point (189, 139);
+        path1[8] = new Point (226, 101);
+        path1[9] = new Point (360, 175);
+        path1[10] = new Point (400, 150);
+        path1[11] = new Point (550, 250);
+        path1[12] = new Point (650, 300);
+        path1[13] = new Point (760, 350);
+
+        path2 = new Point [14];
+        path2[0] = new Point (220, 445);
+        path2[1] = new Point (236, 350);
+        path2[2] = new Point (272, 360);
+        path2[3] = new Point (313, 317);
+        path2[4] = new Point (222, 469);
+        path2[5] = new Point (100, 280);
+        path2[6] = new Point (180, 219);
+        path2[7] = new Point (189, 139);
+        path2[8] = new Point (226, 101);
+        path2[9] = new Point (360, 175);
+        path2[10] = new Point (400, 150);
+        path2[11] = new Point (700, 250);
+        path2[12] = new Point (720, 170);
+        path2[13] = new Point (820, 200);
+
+        path3 = new Point [14];
+        path3[0] = new Point (220, 445);
+        path3[1] = new Point (236, 350);
+        path3[2] = new Point (272, 360);
+        path3[3] = new Point (313, 317);
+        path3[4] = new Point (222, 469);
+        path3[5] = new Point (100, 280);
+        path3[6] = new Point (180, 219);
+        path3[7] = new Point (189, 139);
+        path3[8] = new Point (226, 101);
+        path3[9] = new Point (360, 175);
+        path3[10] = new Point (400, 150);
+        path3[11] = new Point (470, 300);
+        path3[12] = new Point (440, 500);
+        path3[13] = new Point (420, 700);
 
 
-        //construct stinky array
-        bin = new Obstacle[1];
 
 
-        //fill stinky array with constructed bins
+//        int placement = (int)(Math.random()*3);
+
+
+        //construct bin array
+            bin = new Obstacle[20];
+
+
+        //fill bin array with constructed bins
         for(int x=0; x<bin.length; x++){
-            bin[x] = new Obstacle(200, 100, 1, 0, obstaclePic);
 
-            changeY = dots[bin[x].toDot].ypos - bin[x].ypos;
-            changeX = dots[bin[x].toDot].xpos - bin[x].xpos;
+            int placement = (int)(Math.random()*3);
+            if (placement == 0) {
+                bin[x] = new Obstacle(123, 464, 3, 0, obstaclePic, path1);
+            }
+            else if (placement == 1) {
+                bin[x] = new Obstacle(123, 464, 3, 0, obstaclePic, path2);
+            }
+            else if (placement == 2){
+                bin[x] = new Obstacle(123, 464, 3, 0, obstaclePic, path3);
+            }
+            System.out.println("bin placed on path " + placement);
+
+//            need to find a way to stop getting three rows of bins
+
+            changeY = bin[x].path[bin[x].toDot].ypos - bin[x].ypos;
+            changeX = bin[x].path[bin[x].toDot].xpos - bin[x].xpos;
 
             totalDistance = Math.sqrt(Math.pow(changeX, 2) + Math.pow(changeY, 2));
             System.out.println("changeX" + changeX);
@@ -111,6 +169,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
             bin[x].dy = mag * (changeY / totalDistance);
             bin[x].dx = mag * (changeX / totalDistance);
+
         }
     }
 
@@ -121,30 +180,48 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
             render();
             pause(20);
             binPosition();
+            triggerBins();
         }
     }
 
-    public void binPosition(){
+    public void binPosition(){//when bin is intersecting with dot
         for (int i=0; i<bin.length; i++){
-            for (int x=0; x<dots.length; x++) {
-                if (bin[i].rec.intersects(dots[x].rec)) {
-                    System.out.println("bin is intersecting with dot" + x);
+            for (int x = 0; x< bin[i].path.length; x++) {
+                if (bin[i].rec.intersects(bin[i].path[x].rec)) {
+//                    System.out.println("bin is intersecting with dot" + x);
                 }
             }
         }
 
     }
-    public void moveThings() {
+
+    public void triggerBins() {
+        for (int i = 0; i < bin.length; i++) {
+            if (bin[i].isAlive == false) {
+                double r = Math.random();
+                if (r > 0.9999) {
+                    bin[i].isAlive = true;
+                }
+            }
+        }
+        for (int i = 0; i < bin.length; i++) {
+            System.out.println("bin " + i + " isAlive " + bin[i].isAlive);
+        }
+    }
+
+    public void moveThings() {//moving constructer
         setDirection();
 
         jared.move();
 
         for (int x=0; x<bin.length; x++){
-            bin[x].move();
+            if (bin[x].isAlive == true){
+                bin[x].move();
+            }
         }
     }
 
-    public void checkIntersections() {
+    public void checkIntersections() {//when jared dies
         for (int x=0; x<bin.length; x++)
             if (bin[x].rec.intersects(jared.rec)){
                 jared.isAlive = false;
@@ -159,7 +236,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         } catch (InterruptedException e) {
 
         }
-    }
+    }//pause method
 
 
     public void setUpGraphics() {
@@ -193,7 +270,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         System.out.println("DONE");
 
 
-    }
+    }//graphics
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -254,6 +331,16 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
             System.out.println("Game Started");
             gameStart = true;
         }
+
+        if (gameOver.rec.contains(x, y)) {
+            System.out.println("Game Over");
+            gameover = true;
+        }
+
+        if (TryAgain.rec.contains(x, y)) {
+            System.out.println("Game Over");
+            Tryagain = true;
+        }
     }
 
     @Override
@@ -279,31 +366,37 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 //        System.out.println();
 //        System.out.println("Mouse has left the window");
     }
+
     public void setDirection(){
-        if(bin[0].toDot==dots.length){
-            bin[0].dy = 1;
-            bin[0].dx = 0;
-        }
-        else {
-        if(bin[0].rec.intersects(dots[bin[0].toDot].rec)) {
-            bin[0].toDot++;
-            if(bin[0].toDot==dots.length){
-                bin[0].dy = 1;
-                bin[0].dx = 0;
+        for (int x=0; x<bin.length; x++){
+            if(bin[x].toDot == bin[x].path.length){
+                bin[x].dy = 1;
+                bin[x].dx = 0;
             }
             else {
-                changeY = dots[bin[0].toDot].ypos - bin[0].ypos;
-                changeX = dots[bin[0].toDot].xpos - bin[0].xpos;
+                if(bin[x].rec.intersects(bin[x].path[bin[x].toDot].rec)) {
+                    bin[x].toDot++;
+                    bin[x].width = bin[x].width*1.1;
+                    bin[x].height = bin[x].height*1.1;
+                    if(bin[x].toDot== bin[x].path.length){
+                        bin[x].dy = 1;
+                        bin[x].dx = 0;
+                    }
+                    else {
+                        changeY = bin[x].path[bin[x].toDot].ypos - bin[x].ypos;
+                        changeX = bin[x].path[bin[x].toDot].xpos - bin[x].xpos;
 
-                totalDistance = Math.sqrt(Math.pow(changeX, 2) + Math.pow(changeY, 2));
-                System.out.println("changeX" + changeX);
-                System.out.println("changeY" + changeY);
-                System.out.println("total" + totalDistance);
+                        totalDistance = Math.sqrt(Math.pow(changeX, 2) + Math.pow(changeY, 2));
+                        System.out.println("changeX" + changeX);
+                        System.out.println("changeY" + changeY);
+                        System.out.println("total" + totalDistance);
 
-                bin[0].dy = mag * (changeY / totalDistance);
-                bin[0].dx = mag * (changeX / totalDistance);
-            }
-            }
+                        bin[x].dy = mag * (changeY / totalDistance);
+                        bin[x].dx = mag * (changeX / totalDistance);
+                    }
+                }
+        }
+
         }
 
 
@@ -314,24 +407,36 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
         g.clearRect(0, 0, WIDTH, HEIGHT);
         //draw characters to the screen
         if (gameStart == false){
-        g.drawImage(startPic, 0,0,WIDTH, HEIGHT, null);
-        g.drawImage(startDuckPic, 100, 200, 200, 280, null);
-        g.drawImage(playPic, button1.xpos, button1.ypos, button1.width, button1.height, null);
-        g.drawRect(button1.rec.x, button1.rec.y, button1.rec.width, button1.rec.height);
+            g.drawImage(startPic, 0,0,WIDTH, HEIGHT, null);
+            g.drawImage(startDuckPic, 100, 200, 200, 280, null);
+            g.drawImage(playPic, button1.xpos, button1.ypos, button1.width, button1.height, null);
+            g.drawRect(button1.rec.x, button1.rec.y, button1.rec.width, button1.rec.height);
         }
         else {
             g.drawImage(backgroundPic, 0,0, WIDTH, HEIGHT, null);
             for (int x=0; x< bin.length;x++){
+                if (bin[x].isAlive == true) {
+                    g.drawImage(bin[x].pic, (int) bin[x].xpos, (int) bin[x].ypos, (int) bin[x].width, (int) bin[x].height, null);
+                }
                 if (jared.isAlive == true) {
                   //  System.out.println(bin[x].height + " w: " + bin[x].width);
-                    g.drawImage(bin[x].pic,(int) bin[x].xpos, (int)bin[x].ypos, bin[x].width, bin[x].height, null);
+                    if (jared.down == true){
+                        g.drawImage(jaredPic, jared.xpos, 350, jared.width, jared.height, null);
+                    }else if (jared.up == true){
+                        g.drawImage(flyjaredPic, jared.xpos, 100, flyjared.width, flyjared.height, null);
+                    }
                 }
             }
-            if (jared.down == true){
-                g.drawImage(jaredPic, jared.xpos, 350, jared.width, jared.height, null);
-            }else if (jared.up == true){
-                g.drawImage(flyjaredPic, jared.xpos, 100, flyjared.width, flyjared.height, null);
-            }
+
+
+
+//            if (Tryagain = true){
+//                gameStart = false;
+//            }
+//            else{
+//                gameStart = true;
+//            }
+//            g.drawRect(jared.rec.x,jared.rec.y,jared.rec.width,jared.rec.height);
 
         }
 
@@ -340,8 +445,11 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 //        g.drawImage(jaredPic, jared.xpos, jared.ypos, jared.width, jared.height, null);
 
 
-        g.setColor(Color.yellow);
-        g.drawRect(dots[1].rec.x, dots[1].rec.y, 10,10);
+//        g.setColor(Color.yellow);
+//        for (int i = 0; i < bin[0].path.length; i++) {
+//            g.drawRect(bin[0].path[i].rec.x, bin[0].path[i].rec.y, 10, 10);
+//            g.drawString(String.valueOf(i), bin[0].path[i].rec.x, bin[0].path[i].rec.y);
+//        }
 
         g.dispose();
         bufferStrategy.show();
@@ -349,7 +457,7 @@ public class BasicGameApp implements Runnable, KeyListener, MouseListener {
 
 }
 
-    //*******************************************************************************
+//*******************************************************************************
 
 
 
